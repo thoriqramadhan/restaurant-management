@@ -2,10 +2,15 @@
 import { AuthCard } from "@/components/cards";
 import Input from "@/components/input";
 import { signInAuth } from "@/utils/actions/auth";
+import { signIn } from "next-auth/react";
 import Link from "next/link";
 import React from "react";
 
 export default function SignIn() {
+  function handleSignIn(e:FormData){
+    const {email, password} = Object.fromEntries(e) as Record<string, string>
+    signIn('credentials' , {redirect: false, email, password})
+  }
   return (
     <AuthCard
       icon={
@@ -25,7 +30,7 @@ export default function SignIn() {
         </svg>
       }
     >
-      <form action={signInAuth} className="space-y-3 text-black flex-1 flex flex-col *:flex">
+      <form action={handleSignIn} className="space-y-3 text-black flex-1 flex flex-col *:flex">
         <div className="flex-row text-sm flex-wrap items-center gap-1">
           <h2 className="text-2xl font-medium w-full">SignIn</h2>
           <p className="block">dont have an account?</p>

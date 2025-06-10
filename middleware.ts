@@ -10,6 +10,7 @@ export async function middleware(req: NextRequest) {
   if(typeof session == null){
     cookieStore.delete('authjs.session-token')
   }
+  console.log(session , cookieStore);
   
   const publicRoute = ['/signin', '/signup' , '/verify']
   const isInPublicRoute = publicRoute.some(route => req.nextUrl.pathname.startsWith(route))

@@ -1,6 +1,4 @@
 import bcrypt from 'bcryptjs'
-import { getRedisClient } from './redis'
-import { SignUpTemp } from '@/types/redis'
 export async function checkPasswordCorrect(passDb: string , passInput: string){
     const isPasswordCorrect = await bcrypt.compare(passInput , passDb)
     // const isPasswordCorrect = await bcrypt.hash(passInput , 10)

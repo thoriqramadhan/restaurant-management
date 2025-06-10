@@ -24,6 +24,8 @@ export const {handlers , auth , signOut , signIn} = NextAuth(() => {
             if(dbResult.length === 0) {
               return null
             }
+            console.log(credentials);
+            
             
             const isPasswordCorrect = await checkPasswordCorrect(dbResult[0].password , credentials.password as string)
             if (!isPasswordCorrect) throw new Error('Credentials is incorrect!')

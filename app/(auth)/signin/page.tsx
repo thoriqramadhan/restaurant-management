@@ -1,26 +1,21 @@
 "use client";
 import { AuthCard } from "@/components/cards";
 import Input from "@/components/input";
-import { verifyToken } from "@/utils/api/verify";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { deleteTokenFromRedis, getTokenFromRedis } from "@/utils/api/redis";
+import { objectToFormData } from "@/utils/formatter";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import React, { useState } from "react";
+import { redirect, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
 export default function SignIn() {
   const [errorMsg, setErrorMsg] = useState("");
-  const [loading, setLoading] = useState(false)
-  const searchParams = useSearchParams()
-  const tokenVerification = searchParams.get('token') ?? ''
-  // const isTokenValidQuery = useQuery({queryKey: [tokenVerification] , queryFn:async () => await verifyToken(tokenVerification) , enabled: !!tokenVerification})
-  // if(isTokenValidQuery){
-  //   console.log(isTokenValidQuery);
-  // }
-  
+  const [loading, setLoading] = useState(false);
+  const searchParams = useSearchParams();
+  const tokenVerification = searchParams.get("token") ?? "";
   async function handleSignIn(e: FormData) {
     const { email, password } = Object.fromEntries(e) as Record<string, string>;
-    setLoading(true)
+    setLoading(true);
     const res = await signIn("credentials", {
       redirect: false,
       email,
@@ -28,19 +23,32 @@ export default function SignIn() {
     });
     if (res.error) {
       switch (res.error) {
-        case "Configuration":
+        case "CredentialsSignin":
           setErrorMsg("Credentials invalid!");
           break;
 
         default:
           break;
-        
       }
-      setLoading(false)
-      return
+      setLoading(false);
+      return;
     }
+    setLoading(false);
+    redirect("/home");
     // router.push('/home')
   }
+  useEffect(() => {
+    const verify = async () => {
+      const res = await getTokenFromRedis(tokenVerification);
+      if (res.status !== 200) return;
+      const data = { email: res.data?.email, password: res.data?.password };
+      await deleteTokenFromRedis(tokenVerification);
+      await handleSignIn(objectToFormData(data));
+    };
+    if (tokenVerification) {
+      verify();
+    }
+  }, [tokenVerification]);
   return (
     <AuthCard
       icon={
@@ -73,11 +81,11 @@ export default function SignIn() {
         </div>
         <section className="flex-col">
           <label htmlFor="email">Email</label>
-          <Input type="email" name="email" id="email" required/>
+          <Input type="email" name="email" id="email" required />
         </section>
         <section className="flex-col">
           <label htmlFor="password">Password</label>
-          <Input type="password" name="password" id="password" required/>
+          <Input type="password" name="password" id="password" required />
         </section>
         {errorMsg && <p className="text-red-400">{errorMsg}</p>}
         <div className="flex-1 items-end pb-5">

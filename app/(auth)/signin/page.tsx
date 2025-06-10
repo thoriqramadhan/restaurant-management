@@ -98,6 +98,8 @@ export default function SignIn() {
           </button>
         </div>
       </form>
+      <button className="w-full p-3 border flex justify-center cursor-pointer mt-auto disabled:cursor-not-allowed text-black" 
+      onClick={() => signIn('google')}>Google</button>
     </AuthCard>
   );
 }

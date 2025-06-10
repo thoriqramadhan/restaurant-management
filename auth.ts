@@ -1,5 +1,6 @@
 // 'use server'
 import  CredentialsProvider  from 'next-auth/providers/credentials'
+import GoogleProvider from "next-auth/providers/google";
 import NextAuth, { Session } from 'next-auth'
 import PostgresAdapter from '@auth/pg-adapter'
 import { Pool } from '@neondatabase/serverless'
@@ -35,6 +36,10 @@ export const {handlers , auth , signOut , signIn} = NextAuth(() => {
               name: dbResult[0].name ?? '',
             }
           }
+        }),
+        GoogleProvider({
+          clientId: process.env.GOOGLE_CLIENT_ID as string,
+          clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
         })
       ],
       session: {

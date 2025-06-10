@@ -10,14 +10,17 @@ interface PageProps {
   }
 }
 export default async function Page({params} : PageProps) {
-  const token = params.verifyToken
+  const token = await params.verifyToken
   const redisClient = getRedisClient()
   const isTokenValid = (await redisClient.json.get(`signuptemp:${token}`)) as SignUpTemp | null
-  redisClient.destroy()
+
   if(!isTokenValid) {
     return notFound()
   }
+  await redisClient.del(`signuptemp:${token}`)
+  redisClient.destroy()
   const {email , name , password}  = isTokenValid
   await sql.query('INSERT INTO users (name, email, password , "emailVerified") VALUES ($1, $2, $3 , NOW() )', [name, email, bcrypt.hashSync(password, 10)]) 
-  redirect('/signup?verified=true&email=' + token)
+
+  redirect(`/signin?token=${token}`)
 }

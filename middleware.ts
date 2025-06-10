@@ -1,15 +1,20 @@
 // middleware.ts
 import { auth } from "@/auth";
+import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
   const session = await auth();
-  console.log(session);
+  const cookieStore = await cookies()
+  if(typeof session == null){
+    cookieStore.delete('authjs.session-token')
+  }
   
   const publicRoute = ['/signin', '/signup' , '/verify']
-  const isInPublicRoute = publicRoute.includes(req.nextUrl.pathname)
-
+  const isInPublicRoute = publicRoute.some(route => req.nextUrl.pathname.startsWith(route))
+  console.log(isInPublicRoute ,req.nextUrl.pathname );
+  
   if(isInPublicRoute && session?.user){
     return NextResponse.redirect(new URL("/home", req.url));
   }

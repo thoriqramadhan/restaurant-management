@@ -1,4 +1,3 @@
-import { sql } from '@/utils/neon'
 import { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link'
@@ -10,9 +9,6 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
-  const res = await sql.query('SELECT * FROM users')
-  console.log(res);
-  
   return (
     <div className="w-full h-screen flex flex-col">
       <header className='w-full h-[50px] bg-white flex justify-end'>

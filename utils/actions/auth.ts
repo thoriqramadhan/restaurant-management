@@ -1,8 +1,6 @@
 'use server'
 import { signIn } from "next-auth/react";
 import { z } from "zod";
-import { sql } from "../neon";
-import bcrypt from 'bcrypt'
 import { signJwtToken } from "../jwt";
 import { getRedisClient } from "../redis";
 import { sendVerifyEmail } from "../nodemailer";
@@ -27,16 +25,15 @@ export async function signUpAuth(FormData: FormData){
         }
         const timenow = new Date().getTime()
         // get verifytoken
-        const verifyToken = await signJwtToken({...Object.fromEntries(FormData),timenow})
-        // send verify email
-        const verifyResponse = await sendVerifyEmail(email , verifyToken)
-        if(verifyResponse.success === false) return
-        // send payload to jwt
+        const verifyToken = (await signJwtToken({...Object.fromEntries(FormData),timenow})) as string
         const redisClient = getRedisClient()
         redisClient.json.set(`signuptemp:${verifyToken}`,'$', {token: verifyToken , ...Object.fromEntries(FormData)})
         await redisClient.expire(`signuptemp:${verifyToken}`, 3600)
+        // send verify email
+        const verifyResponse = await sendVerifyEmail(email , verifyToken)
+        if(verifyResponse.success === false) return
         // create account in db
-        await sql.query('INSERT INTO users (name, email, password) VALUES ($1, $2, $3 )', [name, email, bcrypt.hashSync(password, 10)])   
+        // await sql.query('INSERT INTO users (name, email, password) VALUES ($1, $2, $3 )', [name, email, bcrypt.hashSync(password, 10)])
     } catch (error) {
         console.log('SignUpError : ' + error);
         

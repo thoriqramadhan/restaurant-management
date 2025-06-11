@@ -1,6 +1,6 @@
-import { BookUser } from "lucide-react";
 import Link from "next/link";
 import React from "react";
+import { renderBy } from "./Navbar";
 
 interface AuthCardProps {
   children: React.ReactNode;
@@ -22,17 +22,6 @@ export function AuthCard({ children, icon }: AuthCardProps) {
 }
 
 export function HomeCard({ role }: { role: 'admin' | 'cashier' | 'chef' | 'customer' }) {
-  const renderBy = {
-    'admin' : [
-      {icon:<BookUser/> , text: 'Manage User' , redirectURL: '/home'}
-    ],
-    'cashier': [],
-    'chef': [],
-    'customer': []
-  }
-  // console.log(renderBy[role]);
-  console.log(role);
-  
   return (
     <div className="w-full flex gap-5 flex-col md:flex-row md:flex-wrap">
       {renderBy[role].map((item , index) => (
@@ -58,7 +47,7 @@ export function HomeCardItem({
             color: "black",
             className: "w-[50px] h-[50px] md:w-[100px] md:h-[100px]",
           })}
-        <p className="font-semibold text-lg md:text-3xl mt-3">{text}</p>
+        <p className="font-semibold text-lg md:text-3xl md:mt-3">{text}</p>
       </div>
     </Link>
   );

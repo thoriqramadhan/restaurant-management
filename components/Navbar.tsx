@@ -1,15 +1,32 @@
 "use client";
 import { hideOnPublicRoute } from "@/utils/utils";
+import { BookUser, House, PackageSearch } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import React, { useContext, useEffect, useRef, useState } from "react";
+import { Role, useRole } from "./context/RoleContext";
+import Link from "next/link";
 
 // types
 interface NavbarContextType {
   navState: boolean;
   navSetter: () => void;
 }
+// variables
+export const renderBy = {
+  admin: [
+    { icon: <BookUser />, text: "Manage Users", redirectURL: "/users" },
+    {
+      icon: <PackageSearch />,
+      text: "Manage Products",
+      redirectURL: "/products",
+    },
+  ],
+  cashier: [],
+  chef: [],
+  customer: [],
+};
 // context
 const NavbarContext = React.createContext<NavbarContextType | undefined>(
   undefined
@@ -36,14 +53,23 @@ export default function Navbar() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const { navState } = useNavbar();
-  const shouldHide = hideOnPublicRoute(pathname)
+  const roleContext = useRole();
+  const role = roleContext?.role as Role;
+  const shouldHide = hideOnPublicRoute(pathname);
+  const newRenderBy = [{ icon: <House />, text: "Home", redirectURL: "/home" }, ...renderBy[role]]
   if (shouldHide) return null;
   return (
     <div className={`w-[80px] h-screen relative ${!navState && "hidden"}`}>
       <div
         className={`w-[80px] h-screen fixed bg-white text-black p-2 flex flex-col items-center`}
       >
-        <div className="flex-1"></div>
+        <div className="flex-1 space-y-3">
+          {newRenderBy.map((item, index) => (
+            <Link href={item.redirectURL} key={index} className={`p-3 rounded-full block ${pathname.startsWith(item.redirectURL) && 'bg-zinc-400/30'}`}>
+              {React.cloneElement(item.icon)}
+            </Link>
+          ))}
+        </div>
         <NavProfile pfp={session?.user?.image} />
       </div>
     </div>

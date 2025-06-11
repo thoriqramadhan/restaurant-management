@@ -1,7 +1,8 @@
+import { Role } from "@/components/context/RoleContext";
 import { fetchJS } from "../fetch";
 
 interface GetRoleResponse {
-    role: string
+    role: Role
 }
 export async function getRole(email: string) : Promise<{status: number , role?: GetRoleResponse , msg?: string}>{
     try {

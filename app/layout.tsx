@@ -34,9 +34,9 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <SessionProvider>
-          <NavbarProvider>
-            <QueryProvider>
-              <RoleProvider>
+          <QueryProvider>
+            <RoleProvider>
+              <NavbarProvider>
                 <div className="w-full flex">
                   <Navbar />
                   <main className="flex-1 p-5">
@@ -44,9 +44,9 @@ export default async function RootLayout({
                     {children}
                   </main>
                 </div>
-              </RoleProvider>
-            </QueryProvider>
-          </NavbarProvider>
+              </NavbarProvider>
+            </RoleProvider>
+          </QueryProvider>
         </SessionProvider>
       </body>
     </html>

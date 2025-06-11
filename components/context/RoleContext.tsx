@@ -7,8 +7,9 @@ import React, { createContext, useContext, useState } from "react"
 
 const RoleContext = createContext<{role:string} | undefined>(undefined)
 
+export type Role = 'admin' | 'cashier' | 'chef' | 'customer' 
 export function RoleProvider({children} : {children: React.ReactNode}){
-    const [role, setRole] = useState<string>('')
+    const [role, setRole] = useState<Role>('customer')
     const {data:session} = useSession()
     const email = session?.user?.email
     console.log(email);

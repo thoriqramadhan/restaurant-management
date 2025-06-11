@@ -11,6 +11,7 @@ export function RoleProvider({children} : {children: React.ReactNode}){
     const [role, setRole] = useState<string>('')
     const {data:session} = useSession()
     const email = session?.user?.email
+    console.log(email);
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const roleQuery = useQuery({queryKey: [email] , queryFn: async () => {
         if(!email) return
@@ -18,7 +19,7 @@ export function RoleProvider({children} : {children: React.ReactNode}){
         if(!roleRes) return
         setRole(roleRes!.role!.role)
         return roleRes
-    } , enabled: !!email})
+    } , enabled: !!email , staleTime: 1000 * 60 * 5})
     
     return <RoleContext.Provider value={{role}}>
         {children}

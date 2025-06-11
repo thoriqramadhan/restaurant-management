@@ -52,6 +52,7 @@ export const {handlers , auth , signOut , signIn} = NextAuth(() => {
             token.id = user.id as string;        // biasanya id pasti string di DB
             token.email = user.email ?? '';
             token.name = user.name ?? '';
+            token.picture = user.image?? '';
           }
           return token;
         },
@@ -61,6 +62,7 @@ export const {handlers , auth , signOut , signIn} = NextAuth(() => {
               id: token.id as string,             // pakai assertion karena yakin ada
               email: token.email ?? '',
               name: token.name ?? '',
+              image: token.picture?? '',
             };
           }
           return session;

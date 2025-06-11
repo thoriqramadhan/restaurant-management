@@ -7,7 +7,6 @@ import { hideOnPublicRoute } from "@/utils/utils";
 export default function HeaderLayout() {
     const pathname = usePathname()
     const shouldHide = hideOnPublicRoute(pathname)
-    console.log(shouldHide);
     if(shouldHide) return null
   return (
     <div className="w-full mb-5">

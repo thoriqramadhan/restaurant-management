@@ -4,6 +4,7 @@ import "./globals.css";
 import { SessionProvider } from "next-auth/react";
 import Navbar, { NavbarProvider } from "@/components/Navbar";
 import { NavToggle } from "@/components/button";
+import HeaderLayout from "@/components/client/HeaderLayout";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,9 +36,7 @@ export default function RootLayout({
             <div className="w-full flex">
               <Navbar />
               <main className="flex-1 p-5">
-                <div className="w-full mb-5">
-                  <NavToggle/>
-                </div>
+                <HeaderLayout/>
                 {children}
               </main>
             </div>

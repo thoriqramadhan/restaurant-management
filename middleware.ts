@@ -13,9 +13,12 @@ export async function middleware(req: NextRequest) {
   // console.log(session , cookieStore);
   
   const publicRoute = ['/signin', '/signup' , '/verify']
+  const isInDefaultRoute = req.nextUrl.pathname.length == 1
   const isInPublicRoute = publicRoute.some(route => req.nextUrl.pathname.startsWith(route))
   // console.log(isInPublicRoute ,req.nextUrl.pathname );
-  
+  if(isInDefaultRoute && session?.user){
+    return NextResponse.redirect(new URL("/home", req.url));
+  }
   if(isInPublicRoute && session?.user){
     return NextResponse.redirect(new URL("/home", req.url));
   }

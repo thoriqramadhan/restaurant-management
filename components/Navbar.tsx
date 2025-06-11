@@ -1,13 +1,16 @@
 "use client";
+import { hideOnPublicRoute } from "@/utils/utils";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import React, { useContext, useEffect, useRef, useState } from "react";
 
+// types
 interface NavbarContextType {
   navState: boolean;
   navSetter: () => void;
 }
+// context
 const NavbarContext = React.createContext<NavbarContextType | undefined>(
   undefined
 );
@@ -27,12 +30,13 @@ export function NavbarProvider({ children }: { children: React.ReactNode }) {
     </NavbarContext.Provider>
   );
 }
+
+// components
 export default function Navbar() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const { navState } = useNavbar();
-  const hideOnRoutes = ["/signin", "/signup", "/auth"];
-  const shouldHide = hideOnRoutes.some((route) => pathname.startsWith(route));
+  const shouldHide = hideOnPublicRoute(pathname)
   if (shouldHide) return null;
   return (
     <div className={`w-[80px] h-screen relative ${!navState && "hidden"}`}>

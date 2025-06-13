@@ -13,6 +13,7 @@
     "@auth/pg-adapter": "^1.9.1",
     "@neondatabase/serverless": "^1.0.0",
     "@redis/client": "^5.5.5",
+    "@supabase/supabase-js": "^2.50.0",
     "@tanstack/react-query": "^5.80.6",
     "@types/bcrypt": "^5.0.2",
     "@types/nodemailer": "^6.4.17",

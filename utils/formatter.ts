@@ -8,3 +8,10 @@ export function objectToFormData(obj) {
     return formData;
   }
   
+export function FormatToIDR(number:number){
+  return new Intl.NumberFormat('id-ID' , {
+    style: 'currency',
+    currency: 'IDR',
+    minimumFractionDigits:0
+  }).format(number)
+}

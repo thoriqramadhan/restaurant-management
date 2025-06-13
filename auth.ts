@@ -9,6 +9,7 @@ import { sql } from './utils/neon'
 import { JWT } from 'next-auth/jwt'
 import { User } from './types/database'
 import { checkPasswordCorrect } from './utils/validate'
+import { getRole } from './utils/api/db';
 export const {handlers , auth , signOut , signIn} = NextAuth(() => {
     const pool = new Pool({ connectionString: process.env.DATABASE_URL })
     return {
@@ -48,11 +49,13 @@ export const {handlers , auth , signOut , signIn} = NextAuth(() => {
       secret: process.env.JWT_SECRET,
       callbacks: {
         async jwt({ token, user }: { token: JWT; user?: UserNext }) {
-          if (user) {
+          if (user?.email) {
+            const {role:roleRes} = await getRole(user.email)
             token.id = user.id as string;        // biasanya id pasti string di DB
             token.email = user.email ?? '';
             token.name = user.name ?? '';
             token.picture = user.image?? '';
+            token.role = roleRes?.role ?? ''
           }
           return token;
         },
@@ -63,6 +66,7 @@ export const {handlers , auth , signOut , signIn} = NextAuth(() => {
               email: token.email ?? '',
               name: token.name ?? '',
               image: token.picture?? '',
+              role: token.role ?? ''
             };
           }
           return session;

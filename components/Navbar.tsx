@@ -52,11 +52,14 @@ export function NavbarProvider({ children }: { children: React.ReactNode }) {
 export default function Navbar() {
   const pathname = usePathname();
   const { data: session } = useSession();
+  // console.log(session);
+  
   const { navState } = useNavbar();
   const roleContext = useRole();
   const role = roleContext?.role as Role;
-  const shouldHide = hideOnPublicRoute(pathname);
+
   const newRenderBy = [{ icon: <House />, text: "Home", redirectURL: "/home" }, ...renderBy[role]]
+  const shouldHide = hideOnPublicRoute(pathname);
   if (shouldHide) return null;
   return (
     <div className={`w-[80px] h-screen relative ${!navState && "hidden"}`}>

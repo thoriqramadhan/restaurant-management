@@ -63,7 +63,7 @@ export function Products({
         <div className="w-full flex flex-wrap">
           <div className="w-full h-fit mt-5 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
             {initialProducts.length > 0 &&
-              initialProducts.map((product, index) => (
+              initialProducts?.map((product, index) => (
                 <ProductCard
                   key={index}
                   name={product.name}
@@ -253,7 +253,7 @@ export function AddProducts({
                 onChange={(e) => handleDetail("imgId", e.target.value)}
               >
                 <option value={0}>None</option>
-                {existingPhotos.map((img, index) => (
+                {existingPhotos?.map((img, index) => (
                   <option value={img.id} key={index}>
                     {img.path}
                   </option>
@@ -324,7 +324,7 @@ export function AddProducts({
               value={detail.category}
               onChange={(e) => handleDetail("category", e.target.value)}
             >
-              {initialCategories.map((category, index) => (
+              {initialCategories?.map((category, index) => (
                 <option value={category.name} key={index} className="index">
                   {category.name}
                 </option>

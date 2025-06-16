@@ -8,6 +8,11 @@ export default async function Page() {
     await getAllCategoryDB(),
     await getAllExistingProductImgsDB()
   ])
+  console.log({
+    products,
+    categories,
+    existingPhotos
+  });
   return (
     <Products initialProducts={products} initialCategories={categories} existingPhotos={existingPhotos}/>
   )

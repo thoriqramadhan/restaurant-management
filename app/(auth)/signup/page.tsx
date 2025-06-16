@@ -25,7 +25,9 @@ export default function SignUp() {
         </svg>
       }
     >
-      <form action={signUpAuth} className="space-y-3 text-black flex-1 flex flex-col *:flex">
+      <form action={(e: FormData) => {
+        signUpAuth(e)
+      }} className="space-y-3 text-black flex-1 flex flex-col *:flex">
         <div className="flex-row text-sm flex-wrap items-center gap-1">
           <h2 className="text-2xl font-medium w-full">SignUp</h2>
           <p className="block">already have an account?</p>
@@ -34,16 +36,13 @@ export default function SignUp() {
           </Link>
         </div>
         <section className="flex-col">
-          <label htmlFor="name">Name</label>
-          <Input type="name" name="name" id="name" />
+          <Input type="name" inputName="name"  minLength={3}/>
         </section>
         <section className="flex-col">
-          <label htmlFor="email">Email</label>
-          <Input type="email" name="email" id="email" />
+          <Input type="email" inputName="email" />
         </section>
         <section className="flex-col">
-          <label htmlFor="password">Password</label>
-          <Input type="password" name="password" id="password" />
+          <Input type="password" inputName="password" minLength={8}/>
         </section>
         <div className="flex-1 items-end pb-5">
         <button type="submit" className="w-full p-3 border flex justify-center cursor-pointer mt-auto">SignUp</button>

@@ -1,4 +1,4 @@
-export function objectToFormData(obj) {
+export function objectToFormData(obj: { [key: string]: string }) {
     const formData = new FormData();
     for (const key in obj) {
       if (obj.hasOwnProperty(key)) {

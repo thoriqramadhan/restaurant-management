@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query"
 import { useSession } from "next-auth/react"
 import React, { createContext, useContext, useState } from "react"
 
-const RoleContext = createContext<{role:string} | undefined>(undefined)
+const RoleContext = createContext<{role:Role} | undefined>(undefined)
 
 export type Role = 'admin' | 'cashier' | 'chef' | 'customer' 
 export function RoleProvider({children} : {children: React.ReactNode}){
@@ -27,7 +27,10 @@ export function RoleProvider({children} : {children: React.ReactNode}){
     </RoleContext.Provider>
 }
 
-export const useRole = () => {
+export const useRole = (): { role: Role } => {
     const roleContext = useContext(RoleContext)
+    if (!roleContext) {
+    throw new Error("useRole must be used within a RoleProvider");
+  }
     return roleContext
 }

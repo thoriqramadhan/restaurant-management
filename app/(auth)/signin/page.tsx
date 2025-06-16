@@ -41,7 +41,7 @@ export default function SignIn() {
     const verify = async () => {
       const res = await getTokenFromRedis(tokenVerification);
       if (res.status !== 200) return;
-      const data = { email: res.data?.email, password: res.data?.password };
+      const data = { email: res.data!.email, password: res.data!.password };
       await deleteTokenFromRedis(tokenVerification);
       await handleSignIn(objectToFormData(data));
     };

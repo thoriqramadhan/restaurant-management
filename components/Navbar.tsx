@@ -32,8 +32,11 @@ const NavbarContext = React.createContext<NavbarContextType | undefined>(
   undefined
 );
 
-export function useNavbar(): NavbarContextType | undefined {
+export function useNavbar(): NavbarContextType {
   const context = useContext(NavbarContext);
+  if (context === undefined) {
+    throw new Error('useNavbar must be used within a NavbarProvider');
+  }
   return context;
 }
 export function NavbarProvider({ children }: { children: React.ReactNode }) {

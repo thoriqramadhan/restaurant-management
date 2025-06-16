@@ -4,13 +4,12 @@ import { getRedisClient } from '@/utils/redis'
 import { notFound, redirect } from 'next/navigation'
 import bcrypt from 'bcrypt'
 
-interface PageProps {
-  params: {
-    verifyToken: string
-  }
-}
-export default async function Page({params} : PageProps) {
-  const token = await params.verifyToken
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ verifyToken: string }>
+}) {
+  const {verifyToken: token} = await params
   const redisClient = getRedisClient()
   if(token.length <= 0) {
     return notFound()

@@ -1,10 +1,9 @@
-import { Product } from "@/types/database";
-import { sql } from "@/utils/neon";
-import { NextRequest, NextResponse } from "next/server";
+import { getAllCategoryDB } from "@/utils/neon";
+import { NextResponse } from "next/server";
 
-export async function GET(req:NextRequest){
+export async function GET(){
     try {
-        const products = (await sql.query('SELECT * FROM categories')) as Product[]
+        const products =await getAllCategoryDB()
         return NextResponse.json(products , {status: 200})
     } catch (error) {
         console.log(error);

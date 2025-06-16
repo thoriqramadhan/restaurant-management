@@ -36,16 +36,13 @@ export default function SignUp() {
           </Link>
         </div>
         <section className="flex-col">
-          <label htmlFor="name">Name</label>
-          <Input type="name" name="name" id="name" minLength={3}/>
+          <Input type="name" inputName="name"  minLength={3}/>
         </section>
         <section className="flex-col">
-          <label htmlFor="email">Email</label>
-          <Input type="email" name="email" id="email" />
+          <Input type="email" inputName="email" />
         </section>
         <section className="flex-col">
-          <label htmlFor="password">Password</label>
-          <Input type="password" name="password" id="password" minLength={8}/>
+          <Input type="password" inputName="password" minLength={8}/>
         </section>
         <div className="flex-1 items-end pb-5">
         <button type="submit" className="w-full p-3 border flex justify-center cursor-pointer mt-auto">SignUp</button>

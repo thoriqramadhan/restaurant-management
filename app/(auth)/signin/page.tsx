@@ -80,12 +80,10 @@ export default function SignIn() {
           </Link>
         </div>
         <section className="flex-col">
-          <label htmlFor="email">Email</label>
-          <Input type="email" name="email" id="email" required />
+          <Input type="email" inputName="email" required />
         </section>
         <section className="flex-col">
-          <label htmlFor="password">Password</label>
-          <Input type="password" name="password" id="password" required />
+          <Input type="password" inputName="password" required />
         </section>
         {errorMsg && <p className="text-red-400">{errorMsg}</p>}
         <div className="flex-1 items-end pb-5">

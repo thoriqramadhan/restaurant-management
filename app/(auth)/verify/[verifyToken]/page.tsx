@@ -19,10 +19,11 @@ export default async function Page({params} : PageProps) {
   
   if(!isTokenValid) {
     return notFound()
+  }else{
+    const {email , name , password}  = isTokenValid
+    await sql.query('INSERT INTO users (name, email, password , "emailVerified" , role) VALUES ($1, $2, $3 , NOW() , $4)', [name, email, bcrypt.hashSync(password, 10) , 'customer']) 
+    redisClient.destroy()
   }
-  redisClient.destroy()
-  const {email , name , password}  = isTokenValid
-  await sql.query('INSERT INTO users (name, email, password , "emailVerified") VALUES ($1, $2, $3 , NOW() )', [name, email, bcrypt.hashSync(password, 10)]) 
 
   redirect(`/signin?token=${token}`)
 }

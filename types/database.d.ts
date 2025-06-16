@@ -14,6 +14,11 @@ export interface Product{
     category: string,
     product_url: string
 }
+export interface ImageDB {
+    id: number,
+    path: string,
+    img_url: string
+}
 export interface Category{
     name: string
 }

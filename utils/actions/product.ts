@@ -3,9 +3,10 @@
 import { sql } from "../neon";
 import { supabaseServer } from "../supabase";
 
+type ActionResponse = Promise<{ status: number; msg: string }>
 export async function addProduct(
   formData: FormData
-): Promise<{ status: number; msg: string }> {
+): ActionResponse {
   const { productName, productPrice, category, imgInput, existingImgId } =
     Object.fromEntries(formData) as {
       productName: string;
@@ -56,4 +57,15 @@ export async function addProduct(
   // await sql.query('INSERT INTO products(name , price , category , img_id) VALUES ($1 ,$2 ,$3, $4)' , [productName , Number(productPrice) , category , img.id])
 
   return { status: 200, msg: "Success adding product!" };
+}
+
+export async function deleteProduct(data: FormData) : ActionResponse {
+  const {productName} = Object.fromEntries(data) as {productName:string}
+  try {
+    await sql.query('DELETE FROM products WHERE name = $1' , [productName.toLowerCase()])
+    return {status: 200 , msg: "Success Deleting Products : " + productName}
+  } catch (error) {
+    console.log(error);
+    return {status: 400 , msg: `Error deleting product : ${error}`}
+  }
 }

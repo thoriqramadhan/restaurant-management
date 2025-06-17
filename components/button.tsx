@@ -1,7 +1,8 @@
 'use client'
 import { AlignEndVertical } from "lucide-react";
-import React from "react";
+import React, { ButtonHTMLAttributes } from "react";
 import { useNavbar } from "./Navbar";
+import { cn } from "@/utils/cn";
 
 export function NavToggle() {
     const {navSetter} = useNavbar()
@@ -10,4 +11,12 @@ export function NavToggle() {
       <AlignEndVertical size={20} color="black" />
     </div>
   );
+}
+
+interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement>{
+  children:React.ReactNode,
+  className?: string,
+}
+export function Button({children, className , ...props}: ButtonProps) {
+  return <button className={cn('px-3 py-1 text-white bg-black rounded-md capitalize border' , className)} {...props}>{children}</button>
 }

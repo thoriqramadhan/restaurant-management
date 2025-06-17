@@ -6,6 +6,7 @@ import Navbar, { NavbarProvider } from "@/components/Navbar";
 import HeaderLayout from "@/components/client/HeaderLayout";
 import { QueryProvider } from "@/components/context/QueryContext";
 import { RoleProvider } from "@/components/context/RoleContext";
+import { ModalProvider } from "@/components/context/ModalContext";
 // import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const geistSans = Geist({
@@ -37,13 +38,15 @@ export default async function RootLayout({
           <QueryProvider>
             <RoleProvider>
               <NavbarProvider>
-                <div className="w-full flex">
-                  <Navbar />
-                  <main className="flex-1 p-5">
-                    <HeaderLayout />
-                    {children}
-                  </main>
-                </div>
+                <ModalProvider>
+                  <div className="w-full flex">
+                    <Navbar />
+                    <main className="flex-1 p-5">
+                      <HeaderLayout />
+                      {children}
+                    </main>
+                  </div>
+                </ModalProvider>
               </NavbarProvider>
             </RoleProvider>
           </QueryProvider>

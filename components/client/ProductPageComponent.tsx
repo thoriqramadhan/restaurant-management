@@ -1,6 +1,6 @@
 "use client";
 import { Category, ImageDB, Product } from "@/types/database";
-import { addProduct, deleteProduct } from "@/utils/actions/product";
+import { addProduct, deleteProduct, editProduct } from "@/utils/actions/product";
 import { cn } from "@/utils/cn";
 import { FormatToIDR } from "@/utils/formatter";
 import { Funnel, Plus, Search, Upload, UtensilsCrossed, X } from "lucide-react";
@@ -211,7 +211,6 @@ export function ProductCard({
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const { handleModal } = useModal();
-  console.log(imgId);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -285,6 +284,7 @@ export function ManageProduct({
   productStateObj,
   initialDatas,
 }: ManageProductProps) {
+  // general states
   const { manageProductState, setManageProductState } = productStateObj;
   const { initialCategories, existingPhotos } = initialDatas;
   const [imgSrc, setImgSrc] = useState("");
@@ -296,6 +296,8 @@ export function ManageProduct({
     category: initialCategories[0].name,
     imgId: 0,
   };
+  // specific state (edit)
+  const [oldName, setOldName] = useState(manageProductState.dataInit.name)
   function handleDetail(
     key: "name" | "price" | "category" | "imgId",
     value: string
@@ -314,7 +316,6 @@ export function ManageProduct({
   }
   function handleImgPreview(event: ChangeEvent<HTMLInputElement>) {
     const target = event.target.files?.[0];
-    console.log(target);
     if (!target?.type.startsWith("image/")) return;
     const reader = new FileReader();
     reader.readAsDataURL(target);
@@ -326,14 +327,14 @@ export function ManageProduct({
   }
   async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    const actionResponse = await addProduct(
-      new FormData(event.currentTarget as HTMLFormElement)
-    );
+    const actionResponse = manageProductState.type === 'add' ? await addProduct(
+      new FormData(event.currentTarget as HTMLFormElement) 
+    ) : await editProduct( new FormData(event.currentTarget as HTMLFormElement))
     if (actionResponse.status != 200) {
       alert(actionResponse.msg);
       return;
     }
-    setDetail(detailInitials);
+    setDetail(manageDataInit);
     if (imgInputRef.current) {
       imgInputRef.current.value = "";
     }
@@ -344,6 +345,7 @@ export function ManageProduct({
     // reinit data on productStateObj changed
     if (manageProductState.dataInit) {
       setDetail(manageProductState.dataInit);
+      setOldName(manageProductState.dataInit.name)
     }
   }, [productStateObj]);
   useEffect(() => {
@@ -443,6 +445,9 @@ export function ManageProduct({
           {/* detail inputs */}
           <div className="flex flex-col justify-between h-full w-full md:flex-1 pb-5 gap-y-3">
             <span className="block w-full">
+              <section className="hidden">
+                <Input inputName="oldName" value={oldName} readOnly className="hidden"/>
+              </section>
               <section>
                 <label htmlFor="productName">Name</label>
                 <input
@@ -499,7 +504,7 @@ export function ManageProduct({
               type="submit"
               className="block w-full h-[35px] bg-black text-white px-3 py-1 rounded-xl cursor-pointer"
             >
-              Add
+              {manageProductState.type === 'add' ? 'Add' : 'Edit'}
             </button>
           </div>
         </form>

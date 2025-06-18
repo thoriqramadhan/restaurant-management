@@ -26,13 +26,59 @@ interface ProductsProps {
   initialCategories: Category[];
   existingPhotos: ImageDB[];
 }
+type ManageDataInit = {
+  name: string;
+  price: number;
+  category: string;
+  imgId: number;
+};
+interface ManageProductState {
+  status: boolean;
+  type: "add" | "edit";
+  dataInit: ManageDataInit;
+}
+
+interface ManageProductProps {
+  productStateObj: {
+    manageProductState: ManageProductState;
+    setManageProductState: Dispatch<SetStateAction<ManageProductState>>;
+  };
+  initialDatas: ProductsProps;
+}
+interface ProductCardProps {
+  name: string;
+  price: string;
+  category: string;
+  product_url: string;
+  imgId: string;
+  handleManageTrigger: (
+    type: "add" | "edit",
+    dataInit?: ManageDataInit
+  ) => void;
+}
 export function Products({
   initialProducts,
   initialCategories,
   existingPhotos,
 }: ProductsProps) {
-  const [isAddProduct, setIsAddProduct] = useState(false);
-  const { modalState } = useModal();
+  const [manageProductState, setManageProductState] =
+    useState<ManageProductState>({
+      status: false,
+      type: "add",
+      dataInit: {
+        name: "",
+        price: 0,
+        category: initialCategories[0].name,
+        imgId: 0,
+      },
+    });
+  const manageDataInit = {
+    name: "",
+    price: 0,
+    category: initialCategories[0].name,
+    imgId: 0,
+  };
+  const { modalState, handleModal } = useModal();
   async function handleDelete(event: FormEvent) {
     event.preventDefault();
     const actionResponse = await deleteProduct(
@@ -43,9 +89,22 @@ export function Products({
       return;
     }
     alert(actionResponse.msg);
+    handleModal("delete-products");
+  }
+  function handleManageTrigger(
+    type: "add" | "edit",
+    dataInit?: ManageDataInit
+  ) {
+    setManageProductState((prev) => ({
+      ...prev,
+      status: !prev.status,
+      type,
+      dataInit: dataInit ? dataInit : prev.dataInit,
+    }));
   }
   return (
     <>
+      {/* Main Content */}
       <section className="w-full h-fit">
         <h1 className="text-xl font-normal tracking-wide mb-5">All Products</h1>
         {/* search & tab */}
@@ -63,15 +122,17 @@ export function Products({
               className="absolute left-2 top-1/2 -translate-y-1/2"
             />
           </span>
+          {/* filter btn */}
           <div className="h-[28px] w-[30px] bg-white rounded-md flex items-center justify-center cursor-pointer relative">
             <Funnel size={18} color="black" />
             <span className="block w-[100px] h-fit bg-white hidden text-black text-center absolute top-[115%] rounded-md overflow-hidden">
               <div className="w-full p-1 hover:bg-slate-400/50">All</div>
             </span>
           </div>
+          {/* add btn */}
           <div
             className="h-[28px] w-[30px] bg-white rounded-md flex items-center justify-center cursor-pointer relative"
-            onClick={() => setIsAddProduct((prev) => !prev)}
+            onClick={() => handleManageTrigger("add" , manageDataInit)}
           >
             <Plus size={18} color="black" />
           </div>
@@ -86,19 +147,22 @@ export function Products({
                   price={String(product.price)}
                   category={product.category}
                   product_url={product.product_url}
+                  imgId={product.imgid}
+                  handleManageTrigger={handleManageTrigger}
                 />
               ))}
           </div>
         </div>
       </section>
       {/* add products page */}
-      <AddProducts
-        productStateObj={{ isAddProduct, setIsAddProduct }}
+      <ManageProduct
+        productStateObj={{ manageProductState, setManageProductState }}
         initialDatas={{ initialProducts, initialCategories, existingPhotos }}
       />
+      {/* delete modal */}
       <Modal
         type="delete-products"
-        className="min-w-full md:min-w-[500px] text-black p-5 space-y-5 flex flex-col"
+        className="min-w-full  text-black p-5 space-y-5 flex flex-col sm:min-w-1/2"
       >
         <h2 className="text-lg font-semibold">Delete Products</h2>
         <form
@@ -115,9 +179,16 @@ export function Products({
               readOnly
               required
             />
+            <p className="text-red-400 text-sm">
+              Product above will be deleted permanently
+            </p>
           </section>
           <section className="w-full grid grid-cols-2 gap-x-2">
-            <Button className="cursor-pointer bg-red-500" type="button">
+            <Button
+              className="cursor-pointer bg-red-500"
+              type="button"
+              onClick={() => handleModal("delete-products")}
+            >
               Cancel
             </Button>
             <Button className="cursor-pointer " type="submit">
@@ -129,21 +200,19 @@ export function Products({
     </>
   );
 }
-interface ProductCardProps {
-  name: string;
-  price: string;
-  category: string;
-  product_url: string;
-}
 export function ProductCard({
   name,
   price,
   category,
   product_url,
+  imgId,
+  handleManageTrigger,
 }: ProductCardProps) {
   const [isOpen, setIsOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   const { handleModal } = useModal();
+  console.log(imgId);
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (ref.current && !ref.current.contains(event.target as Node)) {
@@ -187,7 +256,19 @@ export function ProductCard({
             className="block w-[80px] h-fit text-sm absolute bg-white border border-slate-500 rounded-sm top-[110%] right-0"
             ref={ref}
           >
-            <p className="p-2 hover:bg-slate-300/20">Edit</p>
+            <p
+              className="p-2 hover:bg-slate-300/20"
+              onClick={() =>
+                handleManageTrigger("edit", {
+                  name,
+                  price: Number(price),
+                  category,
+                  imgId: Number(imgId),
+                })
+              }
+            >
+              Edit
+            </p>
             <p
               className="p-2 hover:bg-slate-300/20 text-red-500"
               onClick={() => handleModal("delete-products", { name })}
@@ -200,28 +281,21 @@ export function ProductCard({
     </div>
   );
 }
-export function AddProducts({
+export function ManageProduct({
   productStateObj,
   initialDatas,
-}: {
-  productStateObj: {
-    isAddProduct: boolean;
-    setIsAddProduct: Dispatch<SetStateAction<boolean>>;
-  };
-  initialDatas: ProductsProps;
-}) {
-  const { isAddProduct, setIsAddProduct } = productStateObj;
+}: ManageProductProps) {
+  const { manageProductState, setManageProductState } = productStateObj;
   const { initialCategories, existingPhotos } = initialDatas;
   const [imgSrc, setImgSrc] = useState("");
   const imgInputRef = useRef<HTMLInputElement>(null);
-  const detailInitials = {
+  const [detail, setDetail] = useState(manageProductState.dataInit);
+  const manageDataInit = {
     name: "",
     price: 0,
     category: initialCategories[0].name,
     imgId: 0,
   };
-
-  const [detail, setDetail] = useState(detailInitials);
   function handleDetail(
     key: "name" | "price" | "category" | "imgId",
     value: string
@@ -267,7 +341,17 @@ export function AddProducts({
     alert(actionResponse.msg);
   }
   useEffect(() => {
-    if (detail.imgId == 0) return;
+    // reinit data on productStateObj changed
+    if (manageProductState.dataInit) {
+      setDetail(manageProductState.dataInit);
+    }
+  }, [productStateObj]);
+  useEffect(() => {
+    if (detail.imgId === 0) {
+      setImgSrc("");
+      return
+    }
+    // get url from imgid
     const newImgObject = existingPhotos.find((img) => img.id === detail.imgId);
 
     setImgSrc(newImgObject!.img_url);
@@ -276,20 +360,28 @@ export function AddProducts({
     <section
       className={cn(
         `w-full fixed top-0 left-0 p-5 h-screen bg-white transition-300 translate-y-[5000px] text-black overflow-y-auto ${
-          isAddProduct && "translate-y-0"
+          manageProductState.status && "translate-y-0"
         }`
       )}
     >
       {/* close button */}
       <div
         className="absolute top-5 left-5 cursor-pointer p-2 transition-300 hover:bg-slate-600/20 rounded-full"
-        onClick={() => setIsAddProduct((prev) => !prev)}
+        onClick={() =>
+          setManageProductState((prev) => ({
+            ...prev,
+            status: !prev.status,
+            dataInit: manageDataInit,
+          }))
+        }
       >
         <X color="black" />
       </div>
       {/* ---------- */}
       <div className="h-[405px] md:mt-[10%] lg:mt-[5%]">
-        <h2 className="mt-[60px] text-2xl font-semibold">Add New Products</h2>
+        <h2 className="mt-[60px] text-2xl font-semibold">
+          {manageProductState.type === "add" ? "Add New" : "Edit"} Products
+        </h2>
         <form
           onSubmit={handleSubmit}
           className="flex gap-5 auto-cols-auto flex-wrap h-full"

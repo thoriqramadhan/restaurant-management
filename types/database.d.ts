@@ -13,6 +13,7 @@ export interface Product{
     price: number,
     category: string,
     product_url: string
+    imgid: string
 }
 export interface ImageDB {
     id: number,

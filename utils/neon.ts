@@ -6,7 +6,7 @@ export const sql = neon(process.env.DATABASE_URL ?? '');
 // products
 export async function getAllProductDB(): Promise<Product[]>{
     try {
-        return (await sql.query('SELECT products.id , products.name , products.price , products.category , images.img_url AS product_url FROM products LEFT JOIN images ON(products.img_id=images.id)')) as Product[]
+        return (await sql.query('SELECT products.id , products.name , products.price , products.category , images.img_url AS product_url , images.id AS imgId FROM products LEFT JOIN images ON(products.img_id=images.id)')) as Product[]
     } catch (error) {
         console.log(error);
         return []

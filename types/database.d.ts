@@ -23,3 +23,5 @@ export interface ImageDB {
 export interface Category{
     name: string
 }
+
+export type CategoryProductList  = string[]

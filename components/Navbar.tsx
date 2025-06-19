@@ -1,6 +1,6 @@
 "use client";
 import { hideOnPublicRoute } from "@/utils/utils";
-import { BookUser, House, PackageSearch } from "lucide-react";
+import { BookUser, Box, House, PackageSearch } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -21,6 +21,11 @@ export const renderBy = {
       icon: <PackageSearch />,
       text: "Manage Products",
       redirectURL: "/products",
+    },
+    {
+      icon: <Box />,
+      text: "Manage Category",
+      redirectURL: "/category",
     },
   ],
   cashier: [],

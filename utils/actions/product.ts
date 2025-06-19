@@ -3,7 +3,7 @@
 import { sql } from "../neon";
 import { supabaseServer } from "../supabase";
 
-type ActionResponse = Promise<{ status: number; msg: string }>
+export type ActionResponse = Promise<{ status: number; msg: string }>
 
 async function getImgId(existingImgId?: string , imgInput?:File){
   let imgId = (existingImgId != '0' )? existingImgId : null
@@ -50,7 +50,7 @@ export async function addProduct(
     await sql`BEGIN`;
     // img id for products
     
-    const imgId = getImgId(existingImgId , imgInput)
+    const imgId = await getImgId(existingImgId , imgInput)
     // create products
     await sql.query('INSERT INTO products(name , price , category , img_id) VALUES ($1 ,$2 ,$3, $4)' , [productName.toLowerCase() , Number(productPrice) , category.toLowerCase() , imgId])
     await sql`COMMIT`

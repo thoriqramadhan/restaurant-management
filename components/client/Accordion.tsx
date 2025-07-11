@@ -27,14 +27,18 @@ export default function Accordion({
 interface AccordionItemProps {
   categoryName: string;
   productlists: CategoryProductList;
+  children?: React.ReactNode
 }
+// chidlren specifcyly for another action
 export function AccordionItem({
   categoryName,
   productlists,
+  children
 }: AccordionItemProps) {
   const [accordionState, setAccordionState] = useState(false);
+  const isEmpty = (productlists.length > 0 && productlists[0] == null) || productlists.length <= 0
   function handleAccordion() {
-    if (productlists.length > 0 && productlists[0] == null) {
+    if (isEmpty) {
       return;
     }
 
@@ -45,11 +49,14 @@ export function AccordionItem({
       className="w-full min-h-[50px] max-h-fit border-b-2 cursor-pointer px-2 pt-2"
       onClick={() => handleAccordion()}
     >
-      <div className="w-full flex justify-between items-center mb-2">
+      <div className="w-full flex justify-between items-center mb-2 relative">
         <p className="text-lg tracking-wider font-semibold capitalize">
           {categoryName}
         </p>
-        {!(productlists.length > 0 && productlists[0] == null) && (
+        {isEmpty && 
+        children
+        }
+        {!isEmpty && (
           <ChevronDown className={cn(accordionState && "rotate-180")} />
         )}
       </div>

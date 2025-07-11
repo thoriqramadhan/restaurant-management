@@ -8,6 +8,7 @@ import React, { createContext, useContext, useState } from "react"
 const RoleContext = createContext<{role:Role} | undefined>(undefined)
 
 export type Role = 'admin' | 'cashier' | 'chef' | 'customer' 
+export const roleList = ['admin' , 'cashier' , 'chef' , 'customer'] as Role[]
 export function RoleProvider({children} : {children: React.ReactNode}){
     const [role, setRole] = useState<Role>('customer')
     const {data:session} = useSession()

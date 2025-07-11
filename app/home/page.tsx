@@ -3,10 +3,14 @@ import { HomeCard } from "@/components/cards";
 import { useRole } from "@/components/context/RoleContext";
 import { useSession } from "next-auth/react";
 import React from "react";
+import LoadingPage from "../loading";
 
 export default function Home() {
-  const { data: session } = useSession();
+  const { data: session  } = useSession();
   const { role } = useRole();
+  if(!session){
+    return <LoadingPage/>
+  }
   return (
     <>
       <div className="text-2xl font-bold tracking-wider">

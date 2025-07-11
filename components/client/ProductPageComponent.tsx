@@ -174,7 +174,7 @@ export function Products({
               onSubmit={handleDelete}
               inputName="productName"
               labelVal="Product Name"
-              className="read-only:cursor-not-allowed read-only:bg-slate-300/50 read-only:text-slate-500"
+              className=""
               value={(modalState.value as { name?: string }).name ?? ""}
               readOnly
               required

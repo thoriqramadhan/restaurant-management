@@ -1,13 +1,15 @@
 "use client";
 import { CategoryProductGroup } from "@/utils/neon";
-import React, { FormEvent, useState } from "react";
+import React, { FormEvent, useEffect, useState } from "react";
 import Accordion, { AccordionItem } from "./Accordion";
-import { Plus } from "lucide-react";
+import { Pencil, Plus, Trash } from "lucide-react";
 import Modal from "../modal";
-import { useModal } from "../context/ModalContext";
+import { modalClass, useModal } from "../context/ModalContext";
 import Input from "../input";
 import { Button } from "../button";
-import { addCategory } from "@/utils/actions/category";
+import { addCategory, deleteCategory, editCategory } from "@/utils/actions/category";
+import { cn } from "@/utils/cn";
+import { ActionResponse } from "@/utils/actions/product";
 
 interface CategoryPageComponents {
   categories: CategoryProductGroup[];
@@ -15,25 +17,45 @@ interface CategoryPageComponents {
 export default function CategoryPageComponents({
   categories,
 }: CategoryPageComponents) {
-    const {modalState , handleModal} = useModal()
+    const { modalState,handleModal} = useModal()
     const detailInit = {
-      name: ''
+      name: '',
+      oldname: ''
     }
     const [detail, setDetail] = useState(detailInit)
+    async function actionBaseOnType(event: FormEvent) : ActionResponse{
+      switch (modalState.type) {
+        case 'add-category':
+          return await addCategory(new FormData(event.currentTarget as HTMLFormElement) )
+          case 'delete-category': 
+          return await deleteCategory(new FormData(event.currentTarget as HTMLFormElement))
+          case 'edit-category': 
+          return await editCategory(new FormData(event.currentTarget as HTMLFormElement))
+        default:
+          return {status: 0 , msg: ''}
+      }
+    }
     async function handleSubmit(event: FormEvent){
       event.preventDefault()
-      const actionResponse = await addCategory(new FormData(event.currentTarget as HTMLFormElement) )
+      const actionResponse = await actionBaseOnType(event)
       if(actionResponse.status != 200){
         alert(actionResponse.msg)
         return
       }
       alert(actionResponse.msg)
       setDetail(detailInit)
-      handleModal('add-category')
+      handleModal(modalState.type)
     }
-    function handleDetail(key: 'name' , value: string){
-      setDetail(prev => ({ ...prev,[key]: value ,}))
+    function handleDetail(key: string[] , value: string[]){
+      const keyval =  Object.fromEntries(
+    key.map((item, index) => [item, value[index]])
+  );
+      setDetail(prev => ({ ...prev, ...keyval}))
     }
+    useEffect(() => {
+      console.log(detail);
+      
+    }, [detail])
   return (
     <>
       <Accordion className="relative select-none">
@@ -51,16 +73,51 @@ export default function CategoryPageComponents({
             categoryName={category.name}
             key={index}
             productlists={category.productlist}
-          />
+          >
+            <div className="absolute right-1 flex gap-x-3" onClick={e => e.stopPropagation()}>
+              <Trash size={15} className="hover:text-red-500 transition-300" onClick={() => {
+                handleModal('delete-category')
+                handleDetail(['name'] , [category.name])
+              }}/>
+              <Pencil size={15} className="hover:text-yellow-400 transition-300" onClick={() => {
+              handleModal('edit-category')
+              handleDetail(['name' , 'oldname'] , [category.name , category.name])
+              }}/>
+            </div>
+          </AccordionItem>
         ))}
       </Accordion>
-      <Modal type="add-category" className="text-black p-5 min-w-full min-h-[80%] flex flex-col">
+      <Modal type="add-category" className={cn(modalClass)}>
         <h2 className="text-xl font-semibold">Add Category</h2>
         <form action="" className="flex flex-col justify-between flex-1" onSubmit={handleSubmit}>
           <section className="my-3">
-        <Input inputName="name" value={detail.name} onChange={(e) => handleDetail('name' , e.target.value) }/>
+        <Input inputName="name" value={detail.name} onChange={(e) => handleDetail(['name'] , [e.target.value]) }/>
           </section>
         <Button className="w-full cursor-pointer">Submit</Button>
+        </form>
+      </Modal>
+      <Modal type="edit-category" className={cn(modalClass)}>
+        <h2 className="text-xl font-semibold">Edit Category</h2>
+        <form action="" className="flex flex-col justify-between flex-1" onSubmit={handleSubmit}>
+          <section className="my-3">
+        <Input inputName="name" value={detail.name} onChange={(e) => handleDetail(['name'] , [e.target.value]) }/>
+          </section>
+          <div className="hidden">
+          <Input inputName="oldname" readOnly value={detail.oldname}/>
+          </div>
+        <Button className="w-full cursor-pointer">Confirm</Button>
+        </form>
+      </Modal>
+      <Modal type="delete-category" className={cn(modalClass)}>
+        <h2 className="text-xl font-semibold">Delete Category</h2>
+        <form action="" className="flex flex-col justify-between flex-1" onSubmit={handleSubmit}>
+          <section className="my-3">
+        <Input inputName="name" value={detail.name} readOnly className=""/>
+          </section>
+          <section className="grid grid-cols-2 gap-x-3">
+        <Button className="w-full cursor-pointer" type="button">Cancel</Button>
+        <Button className="w-full cursor-pointer bg-red-500" type="submit">Delete</Button>
+          </section>
         </form>
       </Modal>
     </>

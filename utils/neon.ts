@@ -1,4 +1,4 @@
-import { Category, CategoryProductList, ImageDB, Product } from "@/types/database";
+import { Category, CategoryProductList, ImageDB, Product , User} from "@/types/database";
 import { neon } from "@neondatabase/serverless";
 
 export const sql = neon(process.env.DATABASE_URL ?? '');
@@ -16,6 +16,16 @@ export async function getAllProductDB(): Promise<Product[]>{
 export async function getAllCategoryDB(): Promise<Category[]>{
     try {
         return (await sql.query('SELECT * FROM categories')) as Category[]
+    } catch (error) {
+        console.log(error);
+        return []
+    }
+}
+// users
+export async function getAllUsers(email:string) : Promise<User[]>{
+    try {
+        const users = await sql.query('SELECT * FROM users WHERE email != $1' , [email])
+        return users as User[]
     } catch (error) {
         console.log(error);
         return []

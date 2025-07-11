@@ -20,11 +20,19 @@
 }
 
 @layer components {
+  /* animation & transition */
   .transition-300{
     @apply transition-all duration-300 
   }
   .transition-500{
     @apply transition-all duration-500 
+  }
+  /* typhography */
+  .text-title{
+    @apply text-xl font-semibold tracking-wide
+  }
+  .text-subtitle{
+    @apply font-thin tracking-wider
   }
 }
 body {

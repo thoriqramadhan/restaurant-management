@@ -1,3 +1,4 @@
+// users
 export interface User{
     id: number,
     name: string,
@@ -7,6 +8,7 @@ export interface User{
     role?: string | null,
     password: string
 }
+export type Role = 'admin' | 'cashier' | 'chef' | 'customer'
 export interface Product{
     id: number,
     name: string,

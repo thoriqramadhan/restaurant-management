@@ -6,7 +6,6 @@ import React from 'react'
 export default async function UsersPage() {
   const session = await auth()
   const users = await getAllUsers(session?.user?.email || '')
-  console.log(users);
   return (
     <section className='w-full h-screen'>
       <h2 className='text-title'>Users</h2>

@@ -117,9 +117,9 @@ function NavProfile({ pfp }: { pfp?: string | null }) {
         }`}
         ref={ref}
       >
-        <span className="block w-full py-1 px-3 cursor-pointer transition-300 hover:bg-black/10">
-          Profile
-        </span>
+        <Link href={'/setting'} className="block w-full py-1 px-3 cursor-pointer transition-300 hover:bg-black/10">
+          Settings
+        </Link>
         <span
           className="block w-full py-1 px-3 cursor-pointer transition-300 hover:bg-black/10"
           onClick={() => signOut()}
